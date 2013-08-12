@@ -32,46 +32,47 @@ module.exports = function(grunt) {
       return deferred.promise;
     };
 
+    var threadCount = require('os').cpus().length;
     process.chdir(steal.js || '.');
 
-    var execute = function(i) {
-      var opts = typeof build[i] === 'string' ? {
-        src: build[i]
-      } : build[i],
-      args = [];
-
-      args.push(opts.src);
-      delete opts.src;
-
-      for(var name in opts) {
-        if(opts[name]) {
-          args.push('-' + name);
-
-          if(typeof opts[name] !== 'boolean') {
-            args.push(opts[name]);
-          }
+    function spawnBuild() {
+        var currentBuild = build.pop();
+        if(!currentBuild) {
+            var group = promise.all(instances);
+            group.then(function(results) {
+                grunt.log.ok(results);
+                done();
+            });
+            return;
         }
-      }
 
-      var deferred = runSteal(args);
+        var opts = typeof currentBuild === 'string' ? {
+                src: currentBuild
+            } : currentBuild,
+            args = [];
 
-      deferred.then(function() {
-        if(i < build.length - 1) {
-          execute(++i);
+        args.push(opts.src);
+        delete opts.src;
+
+        for(var name in opts) {
+            if(opts[name]) {
+                args.push('-' + name);
+
+                if(typeof opts[name] !== 'boolean') {
+                    args.push(opts[name]);
+                }
+            }
         }
-        else {
-          process.chdir(gruntDir);
+        var deferred = runSteal(args);
+        instances.push(deferred);
+        deferred.then(function() {
+            spawnBuild();
+        });
+    }
+    for(var i = 0; i < threadCount; i++) {
+        spawnBuild();
+    }
 
-          grunt.log.ok();
-          done();
-        }
-      }, function(e) {
-        grunt.log.error(e.stdout);
 
-        done(false);
-      });
-    };
-
-    execute(0);
   });
 };
