@@ -13,6 +13,7 @@
 		"gruntplugin"
 	],
 	"dependencies": {
+        "exec-sync": "latest",
 		"promised-io": "0.3.0"
 	},
 	"devDependencies": {

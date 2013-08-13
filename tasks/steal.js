@@ -1,78 +1,81 @@
-module.exports = function(grunt) {
-  grunt.registerTask('steal', 'Build your application with StealJS', function() {
-    this.requiresConfig('steal');
+module.exports = function (grunt) {
+    grunt.registerTask('steal', 'Build your application with StealJS', function () {
+        this.requiresConfig('steal');
 
-    var steal = grunt.config('steal'),
-    done = this.async(),
-    promise = require('promised-io/promise'),
+        var steal = grunt.config('steal'),
+            done = this.async(),
+            promise = require('promised-io/promise'),
 
-    build = steal.build && steal.build.length ? steal.build : [],
-    js = require('os').platform() === 'win32' ? 'js.bat' : './js',
+            build = steal.build && steal.build.length ? steal.build : [],
+            js = __dirname + '/../bin/' + (require('os').platform() === 'win32' ? 'js.bat' : 'js'),
+            baseUrl = steal.baseUrl || '',
+            gruntDir = process.cwd(),
+            instances = [],
 
-    gruntDir = process.cwd(),
-    instances = [],
+            runSteal = function (args) {
+                var deferred = new promise.Deferred();
+                grunt.log.writeln('\nRunning: ' + js + ' ' + args.join(' '));
 
-    runSteal = function(args) {
-      var deferred = new promise.Deferred();
-      grunt.log.writeln('\nRunning: ' + js + ' ' + args.join(' '));
+                grunt.util.spawn({
+                    cmd: js,
+                    args: args
+                }, function (e, result, code) {
+                    if (code) {
+                        deferred.reject(e);
+                    }
+                    else {
+                        grunt.log.write(result.stdout);
+                        deferred.resolve();
+                    }
+                });
 
-      grunt.util.spawn({
-        cmd: js,
-        args: args
-      }, function(e, result, code) {
-        if(code) {
-          deferred.reject(e);
-        }
-        else {
-          grunt.log.write(result.stdout);
-          deferred.resolve();
-        }
-      });
+                return deferred.promise;
+            };
 
-      return deferred.promise;
-    };
-
-    var threadCount = require('os').cpus().length;
-    process.chdir(steal.js || '.');
-
-    function spawnBuild() {
-        var currentBuild = build.pop();
-        if(!currentBuild) {
-            var group = promise.all(instances);
-            group.then(function(results) {
-                grunt.log.ok(results);
-                done();
-            });
-            return;
+        if (require('os').platform() !== 'win32') {
+            require('exec-sync')('chmod 755 ' + js);
         }
 
-        var opts = typeof currentBuild === 'string' ? {
-                src: currentBuild
-            } : currentBuild,
-            args = [];
+        var threadCount = require('os').cpus().length;
+        process.chdir(steal.js || '.');
 
-        args.push(opts.src);
-        delete opts.src;
+        function spawnBuild() {
+            var currentBuild = build.pop();
+            if (!currentBuild) {
+                var group = promise.all(instances);
+                group.then(function (results) {
+                    grunt.log.ok(results);
+                    done();
+                });
+                return;
+            }
 
-        for(var name in opts) {
-            if(opts[name]) {
-                args.push('-' + name);
+            var opts = typeof currentBuild === 'string' ? {
+                    src: currentBuild
+                } : currentBuild,
+                args = [];
 
-                if(typeof opts[name] !== 'boolean') {
-                    args.push(opts[name]);
+            args.push(opts.src);
+            delete opts.src;
+
+            for (var name in opts) {
+                if (opts[name]) {
+                    args.push('-' + name);
+
+                    if (typeof opts[name] !== 'boolean') {
+                        args.push(opts[name]);
+                    }
                 }
             }
+            var deferred = runSteal(args);
+            instances.push(deferred);
+            deferred.then(function () {
+                spawnBuild();
+            });
         }
-        var deferred = runSteal(args);
-        instances.push(deferred);
-        deferred.then(function() {
+
+        for (var i = 0; i < threadCount; i++) {
             spawnBuild();
-        });
-    }
-    for(var i = 0; i < threadCount; i++) {
-        spawnBuild();
-    }
-
-
-  });
+        }
+    });
 };
