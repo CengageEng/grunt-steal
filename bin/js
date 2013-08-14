@@ -3,7 +3,7 @@
 # if arguments do exist, it loads the script in the first argument and passes the other arguments to the script
 # ie: ./js steal/script/controller Todo
 
-RHINO=${PWD}/node_modules/rhino/js.jar
+RHINO=${PWD}/node_modules/grunt-steal/rhino/js.jar
 
 if [ $# -eq 0 ]
 then
