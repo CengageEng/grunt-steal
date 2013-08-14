@@ -33,7 +33,7 @@ module.exports = function (grunt) {
             };
 
         if (require('os').platform() !== 'win32') {
-            require('exec-sync')('chmod 755 ' + js);
+            require('fs').chmodSync(js,755);
         }
 
         var threadCount = require('os').cpus().length;
