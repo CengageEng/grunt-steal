@@ -3,9 +3,11 @@
 # if arguments do exist, it loads the script in the first argument and passes the other arguments to the script
 # ie: ./js steal/script/controller Todo
 
+RHINO=${PWD}/node_modules/rhino/js.jar
+
 if [ $# -eq 0 ]
 then
-  java -cp ../rhino/js.jar org.mozilla.javascript.tools.shell.Main
+  java -cp $RHINO org.mozilla.javascript.tools.shell.Main
   exit 127
 fi
 if [ $1 = "-selenium" ]
@@ -13,10 +15,10 @@ if [ $1 = "-selenium" ]
             java -jar funcunit/java/selenium-server-standalone-2.0b3.jar
             exit 127
 fi
-CP=funcunit/java/selenium-java-client-driver.jar:steal/rhino/js.jar
+CP=funcunit/java/selenium-java-client-driver.jar:$RHINO
 if [ $1 = "-mail" ]
 then
-	CP=steal/rhino/mail.jar:funcunit/java/selenium-java-client-driver.jar:steal/rhino/js.jar
+	CP=steal/rhino/mail.jar:funcunit/java/selenium-java-client-driver.jar:$RHINO
 	shift
 fi
 
