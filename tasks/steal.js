@@ -21,6 +21,7 @@ module.exports = function (grunt) {
                     args: args
                 }, function (e, result, code) {
                     if (code) {
+                        grunt.log.write(result.stderr);
                         deferred.reject(e);
                     }
                     else {
