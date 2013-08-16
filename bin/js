@@ -3,11 +3,11 @@
 # if arguments do exist, it loads the script in the first argument and passes the other arguments to the script
 # ie: ./js steal/script/controller Todo
 
-CP="../rhino/js.jar"
-echo "##### Claspath $CP"
+CP="$1/rhino/js.jar"
+printf "##### Classpath $CP\n"
 
 ERRORLEV=0
-if [ $1 = "-e" ]
+if [ $2 = "-e" ]
 then
 	echo 'ERROR REPORTING ACTIVATED'
 	ERRORLEV=1
@@ -23,10 +23,13 @@ do
   fi
 done
 ARGS=$ARGS]
-echo java -Xmx1024m -Xss2048k -cp $CP org.mozilla.javascript.tools.shell.Main -e _args=$ARGS -opt -1 -e 'load('"'"$1"'"')'
-java -Xmx1024m -Xss2048k -cp $CP org.mozilla.javascript.tools.shell.Main -e _args=$ARGS -opt -1 -e 'load('"'"$1"'"')'
+
+echo java -Xmx1024m -Xss2048k -cp $CP org.mozilla.javascript.tools.shell.Main -e _args=$ARGS -opt -1 -e 'load('"'"$2"'"')'
+java -Xmx1024m -Xss2048k -cp $CP org.mozilla.javascript.tools.shell.Main -e _args=$ARGS -opt -1 -e 'load('"'"$2"'"')'
 ret=$?
 if [ "$ERRORLEV" = "1" -o "$ret" -ne "0" ]
 then
 	exit $ret
 fi
+
+

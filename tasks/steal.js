@@ -8,7 +8,8 @@ module.exports = function (grunt) {
             finished = false,
 
             build = steal.build && steal.build.length ? steal.build : [],
-            js = __dirname + '/../bin/' + (require('os').platform() === 'win32' ? 'js.bat' : 'js'),
+            moduleFolder = __dirname + '/..',
+            js = moduleFolder + '/bin/' + (require('os').platform() === 'win32' ? 'js.bat' : 'js'),
             baseUrl = steal.baseUrl || '',
             gruntDir = process.cwd(),
             instances = [],
@@ -57,7 +58,7 @@ module.exports = function (grunt) {
             var opts = typeof currentBuild === 'string' ? {
                     src: currentBuild
                 } : currentBuild,
-                args = [];
+                args = [moduleFolder];
 
             args.push(opts.src);
             delete opts.src;
