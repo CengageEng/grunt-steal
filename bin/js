@@ -12,7 +12,7 @@ printf "##### Getting basename -a = $(basename $0 -a)\n"
 printf "##### Getting dirname -s = $(dirname $0 -s)\n"
 printf "##### Getting basename -s = $(basename $0 -s)\n"
 
-CP="$(dirname $0)/../rhino/js.jar"
+CP="$(/usr/bin/dirname $0)/../rhino/js.jar"
 
 printf "##### Classpath $CP\n"
 
