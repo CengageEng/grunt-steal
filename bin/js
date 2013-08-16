@@ -3,7 +3,7 @@
 # if arguments do exist, it loads the script in the first argument and passes the other arguments to the script
 # ie: ./js steal/script/controller Todo
 
-CP="$(dirname $0)/../rhino/js.jar"
+CP="../rhino/js.jar"
 echo "##### Claspath $CP"
 
 ERRORLEV=0
