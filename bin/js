@@ -4,6 +4,7 @@
 # ie: ./js steal/script/controller Todo
 
 printf "##### Running command $0\n"
+printf "##### Getting dirname = $(dirname $0)\n"
 
 CP="$(dirname $0)/../rhino/js.jar"
 
