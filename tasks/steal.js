@@ -5,6 +5,7 @@ module.exports = function (grunt) {
         var steal = grunt.config('steal'),
             done = this.async(),
             promise = require('promised-io/promise'),
+            finished = false,
 
             build = steal.build && steal.build.length ? steal.build : [],
             js = __dirname + '/../bin/' + (require('os').platform() === 'win32' ? 'js.bat' : 'js'),
@@ -43,11 +44,13 @@ module.exports = function (grunt) {
         function spawnBuild() {
             var currentBuild = build.pop();
             if (!currentBuild) {
-                var group = promise.all(instances);
-                group.then(function (results) {
-                    grunt.log.ok(results);
-                    done();
-                });
+                if(!finished) {
+                    finished = true;
+                    var group = promise.all(instances);
+                    group.then(function (results) {
+                        done();
+                    });
+                }
                 return;
             }
 
