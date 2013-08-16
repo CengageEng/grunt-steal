@@ -4,13 +4,7 @@
 # ie: ./js steal/script/controller Todo
 
 printf "##### Running command $0\n"
-printf "##### Getting dirname = $(dirname $0)\n"
-printf "##### Getting basename = $(basename $0)\n"
-printf "##### Getting PWD = $PWD\n"
-printf "##### Getting dirname -a = $(dirname $0 -a)\n"
-printf "##### Getting basename -a = $(basename $0 -a)\n"
-printf "##### Getting dirname -s = $(dirname $0 -s)\n"
-printf "##### Getting basename -s = $(basename $0 -s)\n"
+printf "##### folder = ${$0%/*}\n"
 
 CP="${$0%/*}/../rhino/js.jar"
 
