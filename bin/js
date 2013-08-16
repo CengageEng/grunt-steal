@@ -3,25 +3,8 @@
 # if arguments do exist, it loads the script in the first argument and passes the other arguments to the script
 # ie: ./js steal/script/controller Todo
 
-BASEDIR=$(dirname $0)
-RHINO="${BASEDIR}/../rhino/js.jar"
-
-if [ $# -eq 0 ]
-then
-  java -cp $RHINO org.mozilla.javascript.tools.shell.Main
-  exit 127
-fi
-if [ $1 = "-selenium" ]
-          then
-            java -jar funcunit/java/selenium-server-standalone-2.0b3.jar
-            exit 127
-fi
-CP=funcunit/java/selenium-java-client-driver.jar:$RHINO
-if [ $1 = "-mail" ]
-then
-	CP=steal/rhino/mail.jar:funcunit/java/selenium-java-client-driver.jar:$RHINO
-	shift
-fi
+CP="$(dirname $0)/../rhino/js.jar"
+echo "##### Claspath $CP"
 
 ERRORLEV=0
 if [ $1 = "-e" ]
@@ -29,23 +12,6 @@ then
 	echo 'ERROR REPORTING ACTIVATED'
 	ERRORLEV=1
 	shift
-fi
-
-if [ $1 = "-h" -o $1 = "-?" -o $1 = "--help" ]
-then
-echo Load a command line Rhino JavaScript environment or run JavaScript script files in Rhino.
-echo Available commands:
-echo -e "./js\t\t\t\tOpens a command line JavaScript environment"
-echo -e "./js -d\t\t\t\tOpens the Rhino debugger"
-echo -e "./js [FILE]\t\t\tRuns FILE in the Rhino environment"
-echo -e ""
-echo  -e "JavaScriptMVC script usage:"
-echo  -e "./js steal/generate/app [NAME]\t\tCreates a new JavaScriptMVC application"
-echo  -e "./js steal/generate/page [APP] [PAGE]\tGenerates a page for the application"
-echo  -e "./js steal/generate/controller [NAME]\tGenerates a Controller file"
-echo  -e "./js steal/generate/model [TYPE] [NAME]\tGenerates a Model file"
-echo  -e "./js apps/[NAME]/compress.js\t\tCompress your application and generate documentation"
-  exit 127
 fi
 
 ARGS=[
@@ -57,6 +23,7 @@ do
   fi
 done
 ARGS=$ARGS]
+echo java -Xmx1024m -Xss2048k -cp $CP org.mozilla.javascript.tools.shell.Main -e _args=$ARGS -opt -1 -e 'load('"'"$1"'"')'
 java -Xmx1024m -Xss2048k -cp $CP org.mozilla.javascript.tools.shell.Main -e _args=$ARGS -opt -1 -e 'load('"'"$1"'"')'
 ret=$?
 if [ "$ERRORLEV" = "1" -o "$ret" -ne "0" ]
