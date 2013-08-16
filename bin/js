@@ -3,14 +3,9 @@
 # if arguments do exist, it loads the script in the first argument and passes the other arguments to the script
 # ie: ./js steal/script/controller Todo
 
-printf "##### Running command $0\n"
-printf "##### folder = ${$0%/*}\n"
-
-CP="${$0%/*}/../rhino/js.jar"
+CP="${0%/*}/../rhino/js.jar"
 
 printf "##### Classpath $CP\n"
-
-exit 0
 
 ERRORLEV=0
 if [ $1 = "-e" ]
