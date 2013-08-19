@@ -5,7 +5,7 @@
 
 CP="${0%/*}/../rhino/js.jar"
 
-printf "\n ##### Classpath $CP"
+printf "\n ##### Classpath $CP\n"
 
 ERRORLEV=0
 if [ $1 = "-e" ]
@@ -24,7 +24,7 @@ do
   fi
 done
 ARGS=$ARGS]
-printf "\n java -Xmx1024m -Xss2048k -cp $CP org.mozilla.javascript.tools.shell.Main -e _args=$ARGS -opt -1 -e load('$1')"
+echo java -Xmx1024m -Xss2048k -cp $CP org.mozilla.javascript.tools.shell.Main -e _args=$ARGS -opt -1 -e load('$1')
 java -Xmx1024m -Xss2048k -cp $CP org.mozilla.javascript.tools.shell.Main -e _args=$ARGS -opt -1 -e 'load('"'"$1"'"')'
 ret=$?
 if [ "$ERRORLEV" = "1" -o "$ret" -ne "0" ]
