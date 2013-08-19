@@ -1,30 +1,30 @@
-module.exports = function (grunt) {
-    grunt.registerTask('steal', 'Build your application with StealJS', function () {
+module.exports = function(grunt) {
+    grunt.registerTask('steal', 'Build your application with StealJS', function() {
         this.requiresConfig('steal');
 
         var steal = grunt.config('steal'),
             done = this.async(),
             promise = require('promised-io/promise'),
+            path = require('path'),
             finished = false,
 
             build = steal.build && steal.build.length ? steal.build : [],
             baseUrl = steal.baseUrl || '',
             gruntDir = process.cwd(),
             instances = [],
-            runSteal = function (args) {
+            runSteal = function(args) {
                 var deferred = new promise.Deferred();
                 grunt.log.writeln('\nRunning: java ' + args.join(' '));
 
                 var ps = grunt.util.spawn({
                     cmd: 'java',
                     args: args
-                }, function (e, result, code) {
+                }, function(e, result, code) {
                     if (code) {
                         grunt.log.writeln('\nAn error has occured:');
                         grunt.log.write(result.stderr);
                         deferred.reject(e);
-                    }
-                    else {
+                    } else {
                         grunt.log.write(result.stdout);
                         deferred.resolve();
                     }
@@ -39,10 +39,10 @@ module.exports = function (grunt) {
         function spawnBuild() {
             var currentBuild = build.pop();
             if (!currentBuild) {
-                if(!finished) {
+                if (!finished) {
                     finished = true;
                     var group = promise.all(instances);
-                    group.then(function (results) {
+                    group.then(function(results) {
                         done();
                     });
                 }
@@ -50,9 +50,10 @@ module.exports = function (grunt) {
             }
 
             var opts = typeof currentBuild === 'string' ? {
-                    src: currentBuild
-                } : currentBuild,
-                args = ['-Xmx1024m', '-Xss2048k', '-verbose', '-cp', __dirname.replace('tasks', 'rhino') + '/js.jar', 'org.mozilla.javascript.tools.shell.Main', '-e', '_args=[]', '-opt', '-1', '-e', 'load("'+opts.src+'")'];
+                src: currentBuild
+            } : currentBuild,
+                jarPath = path.normalize(__dirname.replace('tasks', 'rhino') + '/js.jar'),
+                args = ['-Xmx1024m', '-Xss2048k', '-verbose', '-cp', jarPath, 'org.mozilla.javascript.tools.shell.Main', '-e', '_args=[]', '-opt', '-1', '-e', 'load("' + opts.src + '")'];
             delete opts.src;
 
             for (var name in opts) {
@@ -66,7 +67,7 @@ module.exports = function (grunt) {
             }
             var deferred = runSteal(args);
             instances.push(deferred);
-            deferred.then(function () {
+            deferred.then(function() {
                 spawnBuild();
             });
         }
@@ -75,4 +76,4 @@ module.exports = function (grunt) {
             spawnBuild();
         }
     });
-};
+}
