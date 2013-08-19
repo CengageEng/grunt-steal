@@ -20,12 +20,11 @@ module.exports = function (grunt) {
                     args: args
                 }, function (e, result, code) {
                     if (code) {
-                        grunt.log.write('uh oh');
+                        grunt.log.writeln('\nAn error has occured:');
                         grunt.log.write(result.stderr);
                         deferred.reject(e);
                     }
                     else {
-                        grunt.log.write('yeay');
                         grunt.log.write(result.stdout);
                         deferred.resolve();
                     }
