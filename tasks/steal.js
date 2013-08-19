@@ -52,7 +52,7 @@ module.exports = function (grunt) {
             var opts = typeof currentBuild === 'string' ? {
                     src: currentBuild
                 } : currentBuild,
-                args = ['-Xmx1024m', '-Xss2048k', '-cp', __dirname.replace('tasks', 'rhino') + '/js.jar', 'org.mozilla.javascript.tools.shell.Main', '-e', '_args=[]', '-opt', '-1', '-e', 'load("'+opts.src+'")'];
+                args = ['-Xmx1024m', '-Xss2048k', '-verbose', '-cp', __dirname.replace('tasks', 'rhino') + '/js.jar', 'org.mozilla.javascript.tools.shell.Main', '-e', '_args=[]', '-opt', '-1', '-e', 'load("'+opts.src+'")'];
             delete opts.src;
 
             for (var name in opts) {
