@@ -8,24 +8,24 @@ module.exports = function (grunt) {
             finished = false,
 
             build = steal.build && steal.build.length ? steal.build : [],
-            js = __dirname + '/../bin/' + (require('os').platform() === 'win32' ? 'js.bat' : 'js'),
             baseUrl = steal.baseUrl || '',
             gruntDir = process.cwd(),
             instances = [],
-
             runSteal = function (args) {
                 var deferred = new promise.Deferred();
-                grunt.log.writeln('\nRunning: ' + js + ' ' + args.join(' '));
+                grunt.log.writeln('\nRunning: java ' + args.join(' '));
 
-                grunt.util.spawn({
-                    cmd: js,
+                var ps = grunt.util.spawn({
+                    cmd: 'java',
                     args: args
                 }, function (e, result, code) {
                     if (code) {
+                        grunt.log.write('uh oh');
                         grunt.log.write(result.stderr);
                         deferred.reject(e);
                     }
                     else {
+                        grunt.log.write('yeay');
                         grunt.log.write(result.stdout);
                         deferred.resolve();
                     }
@@ -33,10 +33,6 @@ module.exports = function (grunt) {
 
                 return deferred.promise;
             };
-
-        if (require('os').platform() !== 'win32') {
-            require('fs').chmodSync(js, '755');
-        }
 
         var threadCount = require('os').cpus().length;
         process.chdir(steal.js || '.');
@@ -57,9 +53,7 @@ module.exports = function (grunt) {
             var opts = typeof currentBuild === 'string' ? {
                     src: currentBuild
                 } : currentBuild,
-                args = [];
-
-            args.push(opts.src);
+                args = ['-Xmx1024m -Xss2048k', '-cp', __dirname.replace('tasks', 'rhino') + '/js.jar', 'org.mozilla.javascript.tools.shell.Main', '-e', '_args=[]', '-opt', '-1', '-e', 'load("'+opts.src+'")'];
             delete opts.src;
 
             for (var name in opts) {
