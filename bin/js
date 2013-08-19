@@ -24,7 +24,7 @@ do
   fi
 done
 ARGS=$ARGS]
-echo java -Xmx1024m -Xss2048k -cp $CP org.mozilla.javascript.tools.shell.Main -e _args=$ARGS -opt -1 -e load('$1')
+echo "Starting Rhino"
 java -Xmx1024m -Xss2048k -cp $CP org.mozilla.javascript.tools.shell.Main -e _args=$ARGS -opt -1 -e 'load('"'"$1"'"')'
 ret=$?
 if [ "$ERRORLEV" = "1" -o "$ret" -ne "0" ]
