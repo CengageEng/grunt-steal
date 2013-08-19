@@ -33,7 +33,7 @@ module.exports = function(grunt) {
                 return deferred.promise;
             };
 
-        var threadCount = require('os').cpus().length;
+        var threadCount = 1;//require('os').cpus().length;
         process.chdir(steal.js || '.');
 
         function spawnBuild() {
