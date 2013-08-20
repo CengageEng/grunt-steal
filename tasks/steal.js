@@ -14,7 +14,7 @@ module.exports = function(grunt) {
             instances = [],
             runSteal = function(args) {
                 var deferred = new promise.Deferred();
-                grunt.log.writeln('\n\nRunning: java ' + args.join(' ').replace('load(', '\'load(').replace(')', ')\''));
+                grunt.log.writeln('\n\nRunning: java ' + args.join(' ').replace('load(', '\'load(').replace(')', ')\'') + '\n');
 
                 var ps = grunt.util.spawn({
                     cmd: 'java',
