@@ -9,7 +9,7 @@ module.exports = function(grunt) {
             finished = false,
 
             build = steal.build && steal.build.length ? steal.build : [],
-            _args = '{'+(steal.baseUrl ? 'baseUrl:' + steal.baseUrl : '')+'}',
+            _args = '{'+(steal.baseUrl ? 'baseUrl:\'' + steal.baseUrl + '\'' : '')+'}',
             gruntDir = process.cwd(),
             instances = [],
             runSteal = function(args) {
