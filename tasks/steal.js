@@ -44,6 +44,7 @@ module.exports = function(grunt) {
                     finished = true;
                     var group = promise.all(instances);
                     group.then(function(results) {
+                        process.chdir(gruntDir);
                         done();
                     });
                 }
@@ -51,8 +52,8 @@ module.exports = function(grunt) {
             }
 
             var opts = typeof currentBuild === 'string' ? {
-                src: currentBuild
-            } : currentBuild,
+                    src: currentBuild
+                } : currentBuild,
                 jarPath = path.normalize(__dirname.replace('tasks', 'rhino') + '/js.jar'),
                 args = ['-Xmx1024m', '-Xss2048k', '-cp', jarPath, 'org.mozilla.javascript.tools.shell.Main', '-e', '_args=[]', '-opt', '-1', '-e', 'load("' + opts.src + '")'];
             delete opts.src;
