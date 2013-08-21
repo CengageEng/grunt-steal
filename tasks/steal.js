@@ -9,7 +9,7 @@ module.exports = function(grunt) {
             finished = false,
 
             build = steal.build && steal.build.length ? steal.build : [],
-            baseUrl = steal.baseUrl || '',
+            _args = '{'+(steal.baseUrl ? 'baseUrl:' + steal.baseUrl : '')+'}',
             gruntDir = process.cwd(),
             instances = [],
             runSteal = function(args) {
@@ -55,7 +55,7 @@ module.exports = function(grunt) {
                     src: currentBuild
                 } : currentBuild,
                 jarPath = path.normalize(__dirname.replace('tasks', 'rhino') + '/js.jar'),
-                args = ['-Xmx1024m', '-Xss2048k', '-cp', jarPath, 'org.mozilla.javascript.tools.shell.Main', '-e', '_args=[]', '-opt', '-1', '-e', 'load("' + opts.src + '")'];
+                args = ['-Xmx1024m', '-Xss2048k', '-cp', jarPath, 'org.mozilla.javascript.tools.shell.Main', '-e', '_args='+_args, '-opt', '-1', '-e', 'load("' + opts.src + '")'];
             delete opts.src;
 
             for (var name in opts) {
