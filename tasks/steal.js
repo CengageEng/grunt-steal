@@ -36,6 +36,10 @@ module.exports = function(grunt) {
         var threadCount = require('os').cpus().length;
         grunt.log.ok('Detected ' + threadCount + ' threads...');
 
+        if (!grunt.file.isDir(steal.js)) {
+          grunt.log.error("Configured directory is not present: " + steal.js);
+          return false;
+        }
         process.chdir(steal.js || '.');
 
         function spawnBuild() {
