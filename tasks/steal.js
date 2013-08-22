@@ -59,6 +59,8 @@ module.exports = function(grunt) {
                 args = ['-Xmx1024m', '-Xss2048k', '-cp', jarPath, 'org.mozilla.javascript.tools.shell.Main', '-e', '_args='+_args, '-opt', '-1', '-e', 'load("' + opts.src + '")'];
             delete opts.src;
 
+            grunt.log.ok('jarPath: ' + jarPath);
+
             for (var name in opts) {
                 if (opts[name]) {
                     args.push('-' + name);
