@@ -34,6 +34,7 @@ module.exports = function(grunt) {
             };
 
         var threadCount = require('os').cpus().length;
+        grunt.log.ok('Detected ' + threadCount + ' threads...');
         process.chdir(steal.js || '.');
 
         function spawnBuild() {
