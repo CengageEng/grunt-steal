@@ -33,7 +33,12 @@ module.exports = function(grunt) {
                 return deferred.promise;
             };
 
-        var threadCount = Math.min(require('os').cpus().length, 8);
+        var commandLineMaxThreads = parseInt(grunt.option('max-threads'));
+        if (commandLineMaxThreads && commandLineMaxThreads <= 0) {
+          grunt.log.error('Passed ' + commandLineMaxThreads + ' via max-threads command line option which is invalid!');
+          return false;
+        }
+        var threadCount = commandLineMaxThreads || Math.min(require('os').cpus().length, 8);
         grunt.log.ok('Using ' + threadCount + ' threads...');
 
         if (!grunt.file.isDir(steal.js)) {
