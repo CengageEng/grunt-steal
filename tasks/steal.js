@@ -33,7 +33,7 @@ module.exports = function(grunt) {
                 return deferred.promise;
             };
 
-        var threadCount = require('os').cpus().length;
+        var threadCount = Math.min(require('os').cpus().length, 4);
         grunt.log.ok('Detected ' + threadCount + ' threads...');
 
         if (!grunt.file.isDir(steal.js)) {
