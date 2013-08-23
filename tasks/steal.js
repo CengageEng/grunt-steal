@@ -33,8 +33,8 @@ module.exports = function(grunt) {
                 return deferred.promise;
             };
 
-        var threadCount = Math.min(require('os').cpus().length, 4);
-        grunt.log.ok('Detected ' + threadCount + ' threads...');
+        var threadCount = Math.min(require('os').cpus().length, 8);
+        grunt.log.ok('Using ' + threadCount + ' threads...');
 
         if (!grunt.file.isDir(steal.js)) {
           grunt.log.error("Configured directory is not present: " + steal.js);
