@@ -25,8 +25,19 @@ module.exports = function(grunt) {
                         grunt.log.write(result.stderr);
                         deferred.reject(e);
                     } else {
-                        grunt.log.write(result.stdout);
-                        deferred.resolve();
+                        var path = result.stdout.split(' ')[2].trim() + 'production.js';
+
+                        exec('wc -l ' + path, function(error, results) {
+                            var lineCount = results.trim().split(' ')[0];
+
+                            if (parseInt(lineCount) > 1) {
+                                grunt.log.write(result.stdout);
+                                deferred.resolve();
+                            }
+                            else {
+                                deferred.reject(path + ' failed to build.');
+                            }
+                        });
                     }
                 });
 
