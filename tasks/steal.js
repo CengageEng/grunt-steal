@@ -26,18 +26,19 @@ module.exports = function(grunt) {
                         deferred.reject(e);
                     } else {
                         var path = result.stdout.split(' ')[2].trim() + 'production.js';
-
+                        var buildOutput = result.stdout;
                         grunt.util.spawn({
                             cmd: 'wc',
                             args: ['-l', path]
                         }, function(error, results, code) {
-                            var lineCount = results.trim().split(' ')[0];
+                            var lineCount = results.stdout.trim().split(' ')[0];
 
                             if (parseInt(lineCount) > 1) {
+                                grunt.log.write(buildOutput);
                                 deferred.resolve();
                             }
                             else {
-                                deferred.reject(path + ' failed to build.');
+                                deferred.reject('!!! ' + path + ' failed to build.');
                             }
                         });
                     }
