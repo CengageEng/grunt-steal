@@ -27,11 +27,13 @@ module.exports = function(grunt) {
                     } else {
                         var path = result.stdout.split(' ')[2].trim() + 'production.js';
 
-                        exec('wc -l ' + path, function(error, results) {
+                        grunt.util.spawn({
+                            cmd: 'wc',
+                            args: ['-l', path]
+                        }, function(error, results, code) {
                             var lineCount = results.trim().split(' ')[0];
 
                             if (parseInt(lineCount) > 1) {
-                                grunt.log.write(result.stdout);
                                 deferred.resolve();
                             }
                             else {
