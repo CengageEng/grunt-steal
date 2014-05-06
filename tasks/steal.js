@@ -20,28 +20,22 @@ module.exports = function(grunt) {
                     cmd: 'java',
                     args: args
                 }, function(e, result, code) {
-                    if (code) {
-                        grunt.log.writeln('\nAn error has occured:');
-                        grunt.log.write(result.stderr);
-                        deferred.reject(e);
-                    } else {
-                        var path = result.stdout.split(' ')[2].trim() + 'production.js';
-                        var buildOutput = result.stdout;
-                        grunt.util.spawn({
-                            cmd: 'wc',
-                            args: ['-l', path]
-                        }, function(error, results, code) {
-                            var lineCount = results.stdout.trim().split(' ')[0];
-
-                            if (parseInt(lineCount) > 1) {
-                                grunt.log.write(buildOutput);
-                                deferred.resolve();
-                            }
-                            else {
-                                deferred.reject('!!! ' + path + ' failed to build.');
-                            }
-                        });
+                    var buildOutput = result.stdout;
+                    var path = buildOutput.split(' ')[2].trim() + 'production.js';
+                    if(e || !grunt.file.exists(path)) {
+                        deferred.reject('Problem creating '+ path + '\n' + result.stderr + '\nNo output file generated.\n');
+                        return;
                     }
+                    
+                    var content = grunt.file.read(path).trim();
+                    var lines = content.split('\n');
+                    if(content.charAt(0) === '#' || lines.count <= 1) {
+                        deferred.reject('Problem creating ' + path + '\n' + result.stderr + '\nOutput generated is: \n' + content);
+                        return;
+                    } 
+                    
+                    grunt.log.write(buildOutput);
+                    deferred.resolve();
                 });
 
                 return deferred.promise;
